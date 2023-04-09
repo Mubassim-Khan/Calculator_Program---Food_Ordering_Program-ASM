@@ -34,7 +34,9 @@ userChoice db 0Ah, 0DH, "Enter your choice = $"
 userInput db 0
 
 error db 0Ah, 0DH, "The Result is negative. Enter proper values. $"
-testing db "Its good $"
+
+testing db "TESTING OVERHERE @@@^ $"
+
 a db 0
 b db 0
 
@@ -134,6 +136,7 @@ Subtraction PROC
     sub bl, bh
     add bl, 48
     mov dl, bl
+
     cmp dl, 48
 
     jl negativeResult
