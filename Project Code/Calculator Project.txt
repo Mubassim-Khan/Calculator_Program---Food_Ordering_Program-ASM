@@ -1,4 +1,6 @@
-
-- Make Div & Multiplication Proc
+- Make Div Proc
 - Print welcome message 1 time only. (No way till now)
 - Comment out the Program for remembering
+
+- Breakdown the code into smaller pieces, go for manual input, then msg or input.
+- Try it in small components, other file. Then fit it into main.
