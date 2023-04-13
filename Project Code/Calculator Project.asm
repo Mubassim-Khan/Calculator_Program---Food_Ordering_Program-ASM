@@ -10,7 +10,7 @@ printResult MACRO b1
     int 21h
 ENDM
 
-input MACRO c1
+input MACRO
     mov ah, 1
     int 21h
 ENDM
@@ -29,6 +29,8 @@ msg7 db 0AH, 0DH, "Enter Multiplier : $"
 msg8 db 0AH, 0DH, "Enter Multiplicand : $"
 msg9 db 0AH, 0DH, "Enter Divisior : $"
 msg10 db 0AH, 0DH, "Enter Dividend : $"
+msg12 db 0AH, 0DH, "Remainder : $"
+msg11 db 0AH, 0DH, "Quotient : $"
 
 
 Welcome_msg db 0AH, 0DH, "Welcome to Calculating Machine !$"
@@ -52,7 +54,8 @@ testing db "TESTING OVERHERE @@@^ $"
 
 a db ?
 b db ?
-
+remainder db ?
+quotient db ?
 .code
 main PROC
     mov ax, @data
@@ -233,7 +236,40 @@ Multiplication ENDP
 
 ;Division
 Division PROC
-    printString testing
+    printString msg9
+
+    input
+
+    sub al, 48
+    mov a, al
+
+    printString msg10
+
+    input
+
+    sub al, 48
+    mov b, al
+
+    mov ah, 0
+
+    div a
+
+    mov remainder, ah
+    mov quotient, al
+
+    printString msg11
+
+    mov dl, quotient
+    add dl, 48
+
+    printResult
+
+    printString msg12
+
+    mov dl, remainder
+    add dl, 48
+
+    printResult
 
     printString breaker
     jmp main
