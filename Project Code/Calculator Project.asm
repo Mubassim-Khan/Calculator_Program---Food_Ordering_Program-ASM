@@ -23,45 +23,55 @@ msg2 db 0AH, 0DH, "Enter 2nd Number : $"
 msg3 db 0AH, 0DH, "Result : $"
 
 msg4 db 0AH, 0DH, "Sum : $"
-msg5 db 0AH, 0DH, "Product : $"
+
 msg6 db 0AH, 0DH, "Enter Number : $"
+
 msg7 db 0AH, 0DH, "Enter Multiplier : $"
 msg8 db 0AH, 0DH, "Enter Multiplicand : $"
+msg5 db 0AH, 0DH, "Product : $"
+
 msg9 db 0AH, 0DH, "Enter Divisior : $"
 msg10 db 0AH, 0DH, "Enter Dividend : $"
 msg12 db 0AH, 0DH, "Remainder : $"
 msg11 db 0AH, 0DH, "Quotient : $"
 
+greater db 0AH, 0DH, "1st Number is GREATER than 2nd Number$"
+lesser db 0AH, 0DH, "1st Number is LESSER than 2nd Number$"
+equal db 0AH, 0DH, "Both numbers are EQAUL$"
 
-Welcome_msg db 0AH, 0DH, "Welcome to Calculating Machine !$"
+Welcome_msg db 0AH, 0DH, "Welcome to QuickCalc !$"
+Thank_msg db 0AH, 0DH, "Thank you for using QuickCalc $"
+
 option1 db 0AH, 0DH, "Press 1 -> For Addition$"
 option2 db 0AH, 0DH, "Press 2 -> For Subtraction$"
 option3 db 0AH, 0DH, "Press 3 -> For Multiplication$"
 option4 db 0AH, 0DH, "Press 4 -> For Division$"
 option5 db 0AH, 0DH, "Press 5 -> For Square of a Number$"
-
+option6 db 0AH, 0DH, "Press 6 -> For Comparison of Numbers$"
 option9 db 0AH, 0DH, "Press 0 -> To Exit$"
-Thank_msg db 0AH, 0DH, "Thank you for using Calculator$"
 
-breaker db 0Ah, 0DH, "--------------------------------------------------$"
+breaker db 0AH, 0DH, "==================================================================$"
 
-userChoice db 0Ah, 0DH, "Enter your choice = $"
+userChoice db 0AH, 0DH, "Enter your choice = $"
 userInput db 0
 
-error db 0Ah, 0DH, "The Result is negative. Enter proper values. $"
+error db 0AH, 0DH, "The Result is negative. Enter proper values. $"
 
-testing db "TESTING OVERHERE @@@^ $"
+emptyLine db 0AH, 0DH, " $"
 
 a db ?
 b db ?
 remainder db ?
 quotient db ?
+
 .code
 main PROC
     mov ax, @data
     mov ds, ax
 
     printString Welcome_msg
+
+    printString emptyLine
 
     firstLoop:
 
@@ -75,7 +85,11 @@ main PROC
 
     printString option5
 
+    printString option6
+
     printString option9
+
+    printString emptyLine
 
     printString userChoice
 
@@ -84,10 +98,10 @@ main PROC
     mov userInput, al
 
     cmp userInput, 49
-    je Addition
+    je AdditionLabel
 
     cmp userInput, 50
-    je Subtraction
+    je SubtractionLabel
 
     cmp userInput, 51
     je MultiplicationLabel
@@ -98,10 +112,19 @@ main PROC
     cmp userInput, 53
     je SquareLabel
 
+    cmp userInput, 54
+    je ComparisonLabel
+
     cmp userInput, 48
     je exit
 
     loop firstLoop
+
+    AdditionLabel:
+    jmp Addition
+
+    SubtractionLabel:
+    jmp Subtraction
 
     MultiplicationLabel:
     jmp Multiplication
@@ -111,6 +134,9 @@ main PROC
 
     SquareLabel:
     jmp Square
+
+    ComparisonLabel:
+    jmp Comparison
 
     exit:
     printString Thank_msg
@@ -303,4 +329,37 @@ Square PROC
     printString breaker
     jmp main
 Square ENDP
+
+;Comparison
+Comparison PROC
+    printString msg1
+
+    input
+
+    mov bl, al
+
+    printString msg2
+
+    input
+
+    cmp bl, al
+    je equalLabel
+    jg greaterLabel
+    jl lesserLabel
+
+    equalLabel:
+    printString equal
+    printString breaker
+    jmp main
+
+    greaterLabel:
+    printString greater
+    printString breaker
+    jmp main
+
+    lesserLabel:
+    printString lesser
+    printString breaker
+    jmp main
+Comparison ENDP
 end main

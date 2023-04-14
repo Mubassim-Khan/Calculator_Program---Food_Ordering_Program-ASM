@@ -2,8 +2,13 @@
 - Comment out the Program for remembering
 - Explore taking advance average of numbers.
 
+Points to Ace:
 - Breakdown the code into smaller pieces, go for manual input, then msg or input.
 - Try it in small components, other file. Then fit it into main.
+
+Average Finder:
+- Maybe if I overwrite the input value and sum it at the same time into different variable. Maybe its possible 
+
 --------------------------------------------------------------------------
 13-April -> A basic calculator project COMPLETED
 
@@ -13,5 +18,6 @@
         * Multiplication
         * Division
 
-    EXTRA Component:
+    EXTRA Components:
         * Square
+        * Comparison
