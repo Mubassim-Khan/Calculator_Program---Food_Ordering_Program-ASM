@@ -5,7 +5,7 @@ printString MACRO a1
     int 21h
 ENDM
 
-printResult MACRO b1
+printResult MACRO 
     mov ah, 2
     int 21h
 ENDM
@@ -55,7 +55,8 @@ breaker db 0AH, 0DH, "==========================================================
 userChoice db 0AH, 0DH, "Enter your choice = $"
 userInput db 0
 
-error db 0AH, 0DH, "The Result is negative. Enter proper values. $"
+error1 db 0AH, 0DH, "ERROR: The Result is negative. Enter proper values. $"
+error2 db 0AH, 0DH, "ERROR: Divisor can not be ZERO. $"
 
 emptyLine db 0AH, 0DH, " $"
 
@@ -181,6 +182,7 @@ Addition PROC
     printString breaker
 
     jmp main
+    ret
 Addition ENDP
 
 ;Subtraction Procedure
@@ -209,7 +211,7 @@ Subtraction PROC
     jge PositiveResult
 
     negativeResult:
-    printString error
+    printString error1
     printString breaker
     jmp Subtraction
 
@@ -217,6 +219,7 @@ Subtraction PROC
     printResult
     printString breaker
     jmp main
+    ret
 Subtraction ENDP
 
 ;Multiplication
@@ -257,7 +260,7 @@ Multiplication PROC
 
     printString breaker
     jmp main
-
+    ret
 Multiplication ENDP
 
 ;Division
@@ -265,9 +268,19 @@ Division PROC
     printString msg9
 
     input
-
     sub al, 48
     mov a, al
+
+    cmp a, 0
+    je ZeroInput
+    jg Continue
+
+    ZeroInput:
+    printString error2
+    printString breaker
+    jmp Division
+
+    Continue:
 
     printString msg10
 
@@ -299,6 +312,7 @@ Division PROC
 
     printString breaker
     jmp main
+    ret
 Division ENDP
 
 ;Square
@@ -328,6 +342,7 @@ Square PROC
 
     printString breaker
     jmp main
+    ret
 Square ENDP
 
 ;Comparison
@@ -361,5 +376,6 @@ Comparison PROC
     printString lesser
     printString breaker
     jmp main
+    ret
 Comparison ENDP
 end main

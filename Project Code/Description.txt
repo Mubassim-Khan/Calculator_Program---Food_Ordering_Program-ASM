@@ -1,0 +1,33 @@
+This program consists of 3 MACROs and 7 PROCs 
+MACROs:
+- printString -> Prints the string by using "ah, 9" service routine
+- printResult -> Prints the output by using "ah, 2" service routine
+- input -> Takes the input by using "ah, 1" service routine
+
+PROCs:
+* Main:
+- It prints each line of Instruction's Menu & guides user to press the key according to user Choice
+- It compares user Input and jumps to that specific Procedure
+- At the end of Procedure it jumps again to main Procedure making it an infinte loop
+- The loop will only terminate if user presses '0' which will end the loop as well as program 
+
+* Addition:
+- Takes 2 inputs (1 for each number) and adds them.
+
+* Subtraction:
+- Takes 2 inputs (1 for each number) and subtracts them.
+- If result tends to be negaive it throws an error.
+
+* Division:
+- Takes 2 inputs (1 for each number), divides them and gives result in form of Quotient and Remainder.
+- If user enters Divisior as 0 then it throws an error.
+
+* Multiplication:
+- Takes 2 inputs (1 for each number) and multiplies them.
+
+* Square:
+- Takes 1 input & gives the result by multiplying the input by itself.
+
+* Comparison:
+- Takes 2 inputs (1 for each number) and compares each of them.
+- Gives an output, telling whether the 1st number is greater, lesser or equal to 2nd number.
