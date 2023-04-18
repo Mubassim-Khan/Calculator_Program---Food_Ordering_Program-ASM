@@ -35,9 +35,12 @@ msg10 db 0AH, 0DH, "Enter Dividend : $"
 msg12 db 0AH, 0DH, "Remainder : $"
 msg11 db 0AH, 0DH, "Quotient : $"
 
-greater db 0AH, 0DH, "1st Number is GREATER than 2nd Number$"
-lesser db 0AH, 0DH, "1st Number is LESSER than 2nd Number$"
-equal db 0AH, 0DH, "Both numbers are EQAUL$"
+format1 db " x $"
+format2 db " = $"
+store db 0
+inputValue db ?
+highNo db ?
+lowNo db ?
 
 Welcome_msg db 0AH, 0DH, "Welcome to QuickCalc !$"
 Thank_msg db 0AH, 0DH, "Thank you for using QuickCalc $"
@@ -47,7 +50,7 @@ option2 db 0AH, 0DH, "Press 2 -> For Subtraction$"
 option3 db 0AH, 0DH, "Press 3 -> For Multiplication$"
 option4 db 0AH, 0DH, "Press 4 -> For Division$"
 option5 db 0AH, 0DH, "Press 5 -> For Square of a Number$"
-option6 db 0AH, 0DH, "Press 6 -> For Comparison of Numbers$"
+option6 db 0AH, 0DH, "Press 6 -> For Table of any Number$"
 option9 db 0AH, 0DH, "Press 0 -> To Exit$"
 
 breaker db 0AH, 0DH, "==================================================================$"
@@ -98,25 +101,25 @@ main PROC
 
     mov userInput, al
 
-    cmp userInput, 49
+    cmp userInput, '1'
     je AdditionLabel
 
-    cmp userInput, 50
+    cmp userInput, '2'
     je SubtractionLabel
 
-    cmp userInput, 51
+    cmp userInput, '3'
     je MultiplicationLabel
 
-    cmp userInput, 52
+    cmp userInput, '4'
     je DivisionLabel
 
-    cmp userInput, 53
+    cmp userInput, '5'
     je SquareLabel
 
-    cmp userInput, 54
-    je ComparisonLabel
+    cmp userInput, '6'
+    je TableLabel
 
-    cmp userInput, 48
+    cmp userInput, '0'
     je exit
 
     loop firstLoop
@@ -136,8 +139,8 @@ main PROC
     SquareLabel:
     jmp Square
 
-    ComparisonLabel:
-    jmp Comparison
+    TableLabel:
+    jmp Table11
 
     exit:
     printString Thank_msg
@@ -345,37 +348,60 @@ Square PROC
     ret
 Square ENDP
 
-;Comparison
-Comparison PROC
-    printString msg1
+;Table
+Table11 PROC
+    printString msg6
 
     input
+
+    mov inputValue, al
+
+    sub al, 48
 
     mov bl, al
 
-    printString msg2
+    printString emptyLine
 
-    input
+    mov cx, 10
 
-    cmp bl, al
-    je equalLabel
-    jg greaterLabel
-    jl lesserLabel
+    TableLoop:
+    mov ah, 0
 
-    equalLabel:
-    printString equal
-    printString breaker
-    jmp main
+    mov al, store
 
-    greaterLabel:
-    printString greater
-    printString breaker
-    jmp main
+    mul bl
+    AAM
 
-    lesserLabel:
-    printString lesser
+    mov highNo, ah
+    mov lowNo, al
+
+    mov dl, inputValue
+    printResult 
+
+    printString format1
+
+    mov dl, store
+    add dl, 48
+    printResult
+
+    printString format2
+
+    mov dl, highNo
+    add dl, 48
+    printResult
+
+    mov dl, lowNo
+    add dl, 48
+    printResult
+
+    printString emptyLine
+
+    inc store
+    loop TableLoop
+    mov store, 0
+
     printString breaker
     jmp main
     ret
-Comparison ENDP
+Table11 ENDP
 end main
