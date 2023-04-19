@@ -28,6 +28,6 @@ PROCs:
 * Square:
 - Takes 1 input & gives the result by multiplying the input by itself.
 
-* Comparison:
-- Takes 2 inputs (1 for each number) and compares each of them.
-- Gives an output, telling whether the 1st number is greater, lesser or equal to 2nd number.
+* Multiplication Table:
+- Takes an input & multiplies each number from 0 to 9 using a loop.
+
