@@ -14,8 +14,9 @@
 
 * It is also able to handle exceptions. For example:
 - Throws an error if Divisior is 0
-- Throws an error if the result is negative during Subtraction
 
 * It takes the input values from 0-9 range.
+
+* It prints a message a 'Thank you' message if user exits the program using Graphics.
 
 NOTE: Output could be of 2 digits depending upon the input values.

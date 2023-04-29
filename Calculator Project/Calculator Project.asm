@@ -30,20 +30,21 @@ msg7 db 0AH, 0DH, "Enter Multiplier : $"
 msg8 db 0AH, 0DH, "Enter Multiplicand : $"
 msg5 db 0AH, 0DH, "Product : $"
 
-msg9 db 0AH, 0DH, "Enter Divisior : $"
+msg9 db 0AH, 0DH, "Enter Divisor : $"
 msg10 db 0AH, 0DH, "Enter Dividend : $"
-msg12 db 0AH, 0DH, "Remainder : $"
 msg11 db 0AH, 0DH, "Quotient : $"
 
 format1 db " x $"
 format2 db " = $"
-store db 0
+store db 1
 inputValue db ?
 highNo db ?
 lowNo db ?
+Ten db 10
+StrTen db "10$"
 
 Welcome_msg db 0AH, 0DH, "Welcome to QuickCalc !$"
-Thank_msg db 0AH, 0DH, "Thank you for using QuickCalc $"
+Thank_msg db 0AH, 0DH, "                        Thank you for using QuickCalc ! $"
 
 option1 db 0AH, 0DH, "Press 1 -> For Addition$"
 option2 db 0AH, 0DH, "Press 2 -> For Subtraction$"
@@ -58,8 +59,8 @@ breaker db 0AH, 0DH, "==========================================================
 userChoice db 0AH, 0DH, "Enter your choice = $"
 userInput db 0
 
-error1 db 0AH, 0DH, "ERROR: The Result is negative. Enter proper values. $"
-error2 db 0AH, 0DH, "ERROR: Divisor can not be ZERO. $"
+error db 0AH, 0DH, "WARNING: Divisor can not be ZERO '0', else the Answer would be 'INFINITY'. $"
+throwError db 0AH, 0DH, "ERROR: Enter correct option number $"
 
 emptyLine db 0AH, 0DH, " $"
 
@@ -122,7 +123,16 @@ main PROC
     cmp userInput, '0'
     je exit
 
-    loop firstLoop
+    cmp userInput, '7'
+    je inputError
+
+    cmp userInput, '8'
+    je inputError
+
+    cmp userInput, '9'
+    je inputError
+
+    jmp jumper
 
     AdditionLabel:
     jmp Addition
@@ -142,12 +152,34 @@ main PROC
     TableLabel:
     jmp Table11
 
+    inputError:
+    printString throwError
+    printString emptyLine
+    jmp firstLoop
+
     exit:
-    printString Thank_msg
+    mov ah, 6
+; Black Background with text
+    mov al, 100
+    mov bh, 00001110b
+    mov ch, 0
+    mov cl, 0
+    mov dh, 100
+    mov dl, 100
+    int 10h 
+
+    mov dx, offset Thank_msg
+    mov ah,9
+    int 21h
 
     mov ah, 4ch
     int 21h
 main ENDP
+
+;Supporting Proc (Jumps to the firstLoop)
+jumper PROC
+    jmp firstLoop
+jumper ENDP
 
 ;Procedure for Addition
 Addition PROC
@@ -156,30 +188,60 @@ Addition PROC
 
     input
 
-    mov a, al
+    sub al, 48
+    mov bh, al
+
+    input
+
+    sub al, 48
+    mov bl, al
+
+; 1st two digit value into 'BX'
 
     printString msg2
 
     input
 
-    mov b, al
+    sub al, 48
+    mov ch, al
 
+    input
+
+    sub al, 48
+    mov cl, al
+
+; 2nd two digit value into 'CX' 
+
+    add bl, cl
+
+    mov al, bl
     mov ah, 0
-
-    add al, a
     AAA
 
-    add al, 48
-    add ah, 48
+    mov cl, al
+    mov bl, ah
+
+    add bl, bh
+    add bl, ch
+
+    mov al, bl
+    mov ah, 0
+    AAA
 
     mov bx, ax
 
     printString msg4
-
+    
     mov dl, bh
+    add dl, 48
     printResult 
 
     mov dl, bl
+    add dl, 48
+    printResult
+
+    mov dl, cl
+    add dl, 48
     printResult
 
     printString breaker
@@ -202,25 +264,32 @@ Subtraction PROC
     
     mov bh, al
 
-    printString msg3
+    cmp bl, bh
+    jl Minus
 
     sub bl, bh
-    add bl, 48
+
+    printString msg3
+
     mov dl, bl
-
-    cmp dl, 48
-
-    jl negativeResult
-    jge PositiveResult
-
-    negativeResult:
-    printString error1
-    printString breaker
-    jmp Subtraction
-
-    positiveResult:
+    add dl, 48
     printResult
     printString breaker
+    jmp main
+
+    Minus:
+    sub bh, bl
+
+    printString msg3
+
+    mov dl, '-'
+    printResult
+
+    mov dl, bh
+    add dl, 48
+    printResult
+    printString breaker
+
     jmp main
     ret
 Subtraction ENDP
@@ -279,8 +348,8 @@ Division PROC
     jg Continue
 
     ZeroInput:
-    printString error2
-    printString breaker
+    printString error
+    printString emptyLine
     jmp Division
 
     Continue:
@@ -299,19 +368,35 @@ Division PROC
     mov remainder, ah
     mov quotient, al
 
-    printString msg11
+    printString msg3
 
     mov dl, quotient
     add dl, 48
 
     printResult
 
-    printString msg12
-
-    mov dl, remainder
-    add dl, 48
-
+    mov dl, '.'
     printResult
+
+    mov cx, 2
+
+    floatNo:
+
+    mov al, remainder
+    mov bl, 10
+    mul bl
+
+    mov b, al
+    div a
+
+    mov quotient, al
+    mov remainder, ah
+
+    mov dl, quotient
+    add dl, 48
+    printResult
+
+    loop floatNo
 
     printString breaker
     jmp main
@@ -362,7 +447,7 @@ Table11 PROC
 
     printString emptyLine
 
-    mov cx, 10
+    mov cx, 9
 
     TableLoop:
     mov ah, 0
@@ -398,7 +483,36 @@ Table11 PROC
 
     inc store
     loop TableLoop
-    mov store, 0
+    mov store, 1
+
+    mov dl, inputValue
+    printResult
+
+    sub dl, 48
+
+    mov al, Ten
+
+    mul bl
+    AAM
+
+    mov highNo, ah
+    mov lowNo, al
+
+    printString format1
+
+    printString StrTen
+
+    printString format2
+
+    mov dl, highNo
+    add dl, 48
+    mov ah, 2
+    int 21h
+
+    mov dl, lowNo
+    add dl, 48
+    mov ah, 2
+    int 21h
 
     printString breaker
     jmp main
