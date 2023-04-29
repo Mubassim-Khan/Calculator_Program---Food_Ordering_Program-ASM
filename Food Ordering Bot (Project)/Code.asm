@@ -14,52 +14,56 @@ Input MACRO
     int 21h
 ENDM
 
-addZeros MACRO 
-    mov dl, '0'
-    mov ah, 2
-    int 21h
-
-    mov dl, '0'
-    mov ah, 2
-    int 21h
-ENDM
-
 .model small
 .stack 100h
 .data
 
-Welcome db 0AH, 0DH, "Welcome to xyz cafe, Please order from below options$"
-Thanks_msg db 0AH, 0DH, "Thanks for selecting xyz cafe. Have a nice day$"
-seperator db 0AH, 0DH, "------------------------------------ $"
+Welcome db 0AH, 0DH, "Welcome to DineDesk, Please order from menu below $"
+Thanks_msg db 0AH, 0DH, "Thanks for selecting DineDesk. Have a nice day :) $"
+seperator db 0AH, 0DH, "------------------------------------------------------- $"
 
-menuList db 0AH, 0DH, "Items                Price$"
-item1 db 0AH, 0DH, "1 => Burgoir        Rs.300$"
-item2 db 0AH, 0DH, "2 => Chipas         Rs.100$"
-item3 db 0AH, 0DH, "3 => Biscut         Rs.100$"
-item4 db 0AH, 0DH, "4 => Posta          Rs.500$"
-item5 db 0AH, 0DH, "5 => Baryani        Rs.200$"
+menu db 0AH, 0DH, '*************************MENU***************************$'
+menuList db 0AH, 0DH, "Option Number    Items                Price$"
+item1 db 0AH, 0DH, "1               Burgur              Rs.300$"
+item2 db 0AH, 0DH, "2               Chips               Rs.100$"
+item3 db 0AH, 0DH, "3               Pasta               Rs.500$"
+item4 db 0AH, 0DH, "4               Biryani             Rs.200$"
+reset db 0AH, 0AH, "0  =>  To reset/empty your cart $"
+Billvar db 0AH, 0DH, "8  =>  View Cart & Total bill payable $"
+
+totalItems db 0AH, 0DH, "Total items ordered are: $"
+
+billList db 0AH, 0DH, "Items            Quantity$"
+itemBill1 db 0AH, 0DH, "Burgur              $"
+itemBill2 db 0AH, 0DH, "Chips               $"
+itemBill3 db 0AH, 0DH, "Pasta               $"
+itemBill4 db 0AH, 0DH, "Biryani             $"
+
 totalBill db 0AH, 0DH, "Your total bill is = $"
+Error db 0AH, 0DH, "You Entered wrong input $"
 
-Billvar db 0AH, 0DH, "8 => Cart/total bill $"
-terminate db 0AH, 0DH, "0 => Exit $"
+option db 0AH, 0DH, "Enter option number = $"
 
-msg1 db 0AH, 0DH, "Enter option number = $"
-
-testing db 0AH, 0DH, "Testing Code $"
 emptyLine db 0AH, 0DH, "$"
 
-temp1 db 0
-temp2 db 0
+confirm1 db 0AH, 0DH, "1 BURGUR added to cart $"
+confirm2 db 0AH, 0DH, "1 CHIPS added to cart $"
+confirm3 db 0AH, 0DH, "1 PASTA added to cart $"
+confirm4 db 0AH, 0DH, "1 BIRYANI added to cart $"
+confirm5 db 0AH, 0DH, "**Your cart is now empty** $"
+confirm6 db 0AH, 0DH, "Do you want to continue ordering ? $"
+confirm7 db 0AH, 0DH, "(y) or (n) $"
 
-HighAmount db ?
-LowAmount db 0
+rupee db "Rs $"
 
+amount dw 0
+count dw  '0'
 
-i1 db 3
-i2 db 1
-i3 db 1
-i4 db 5
-i5 db 2
+b db '0'
+c db '0'
+p db '0'
+br db '0'
+.code
 .code
 main PROC
     mov ax, @data
@@ -70,6 +74,8 @@ main PROC
     printMsg Welcome
 
     printMsg emptyLine
+
+    printMsg menu
     
     mainLoop:
     printMsg menuList
@@ -79,15 +85,14 @@ main PROC
     printMsg item2
     printMsg item3
     printMsg item4
-    printMsg item5
 
     printMsg emptyLine
+    printMsg reset
     printMsg Billvar
-    printMsg terminate
 
     printMsg emptyLine
 
-    printMsg msg1
+    printMsg option
     Input
 
     cmp al, '1'
@@ -101,40 +106,37 @@ main PROC
     
     cmp al, '4'
     je optionLabel4
-    
-    cmp al, '5'
-    je optionLabel5
+
+    cmp al, '0'
+    je resetLabel
 
     cmp al, '8'
     je billLabel
-
-    cmp al, '0'
-    je exit
+    
+    printMsg Error
+    printMsg emptyLine
+    jmp mainLoop
     
     loop mainLoop
 
     optionLabel1:
-    call option1
+    jmp option1
 
     optionLabel2:
-    call option2
+    jmp option2
 
     optionLabel3:
-    call option3
+    jmp option3
 
     optionLabel4:
-    call option4
+    jmp option4
 
-    optionLabel5:
-    call option5
+    resetLabel:
+    jmp resetCart
 
     billLabel:
-    call bill
+    jmp bill
 
-    exit:
-    printMsg Thanks_msg
-    mov ah, 4ch
-    int 21h
 
 main ENDP
 
@@ -142,31 +144,30 @@ main ENDP
 option1 PROC
     printMsg emptyLine
 
-    mov bl, i1
-    add bl, 48
+    mov ax, 300
+    add amount, ax
+    mov dx, 0
+    mov bx, 10
+    mov cx, 0
 
-    mov bh, 0
+    OP1Loop1:
+    div bx
+    push dx
+    mov dx, 0
+    mov ah, 0
+    inc cx
+    cmp ax, 0
+    jne OP1Loop1
 
-    mov al, LowAmount
+    OP1Loop2:
+    pop dx
+    add dx, 48
+    loop OP1Loop2
 
-    mov ah, HighAmount
-
-    add ax, bx
-    AAA
-    mov cx, ax
-
-    add ch, 48
-    add cl, 48
-
-    mov HighAmount, ch
-    mov LowAmount, cl
-
-    mov dl, HighAmount
-    printOutput
-
-    mov dl, LowAmount
-    printOutput
-    mov HighAmount, 0
+    inc count
+    inc b
+    printMsg confirm1
+    printMsg emptyLine
 
     jmp mainLoop
     ret
@@ -176,32 +177,30 @@ option1 ENDP
 option2 PROC
     printMsg emptyLine
 
-    mov bl, i2
-    add bl, 48
+    mov ax, 100
+    add amount, ax
+    mov dx, 0
+    mov bx, 10
+    mov cx, 0
 
-    mov bh, 0
+    OP2Loop1:
+    div bx
+    push dx
+    mov dx, 0
+    mov ah, 0
+    inc cx
+    cmp ax, 0
+    jne OP2Loop1
 
-    mov al, LowAmount
+    OP2Loop2:
+    pop dx
+    add dx, 48
+    loop OP2Loop2
 
-    mov ah, HighAmount
-
-    add ax, bx
-    AAA
-    mov cx, ax
-
-    add ch, 48
-    add cl, 48
-
-    mov HighAmount, ch
-    mov LowAmount, cl
-
-    mov dl, HighAmount
-    printOutput
-
-    mov dl, LowAmount
-    printOutput
-
-    mov HighAmount, 0
+    inc count
+    inc c
+    printMsg confirm2
+    printMsg emptyLine
 
     jmp mainLoop
     ret
@@ -209,47 +208,156 @@ option2 ENDP
 
 ; Option 3
 option3 PROC
-    printMsg testing
+    printMsg emptyLine
+
+    mov ax, 500
+    add amount, ax
+    mov dx, 0
+    mov bx, 10
+    mov cx, 0
+
+    OP3Loop1:
+    div bx
+    push dx
+    mov dx, 0
+    mov ah, 0
+    inc cx
+    cmp ax, 0
+    jne OP3Loop1
+
+    OP3Loop2:
+    pop dx
+    add dx, 48
+    loop OP3Loop2
+
+    inc count
+    inc p
+    printMsg confirm3
     printMsg emptyLine
 
     jmp mainLoop
     ret
 option3 ENDP
 
-; Option 4
+; ; Option 4
 option4 PROC
-    printMsg testing
+    printMsg emptyLine
+
+    mov ax, 200
+    add amount, ax
+    mov dx, 0
+    mov bx, 10
+    mov cx, 0
+
+    OP4Loop1:
+    div bx
+    push dx
+    mov dx, 0
+    mov ah, 0
+    inc cx
+    cmp ax, 0
+    jne OP4Loop1
+
+    OP4Loop2:
+    pop dx
+    add dx, 48
+    loop OP4Loop2
+
+    inc count
+    inc br
+    printMsg confirm4
     printMsg emptyLine
 
     jmp mainLoop
     ret
 option4 ENDP
 
-; Option 5
-option5 PROC
-    printMsg testing
+;Reset Cart & Bill
+resetCart PROC
+    printMsg emptyLine
+    mov b, '0'
+    mov c, '0'
+    mov p, '0'
+    mov br, '0'
+    mov amount, 0
+    mov count, '0'
+
+    printMsg confirm5
     printMsg emptyLine
 
     jmp mainLoop
-    ret
-option5 ENDP
+
+resetCart ENDP
 
 ;Billing
 bill PROC
-    printMsg totalBill
 
-    mov dl, HighAmount
+    printMsg emptyLine
+    printMsg billList
+    printMsg seperator
+
+    printMsg itemBill1
+    mov dl, b
     printOutput
 
-    mov dl, LowAmount
+    printMsg itemBill2
+    mov dl, c
     printOutput
 
-    addZeros
+    printMsg itemBill3
+    mov dl, p
+    printOutput
+
+    printMsg itemBill4
+    mov dl, br
+    printOutput
+
     printMsg emptyLine
 
-    ; mov HighAmount, 0
+    printMsg totalItems
+    mov dx, count
+    printOutput
 
-    jmp mainLoop
+    printMsg totalBill
+    printMsg rupee
+    
+    mov ax, amount
+    mov dx, 0
+    mov bx, 10
+    mov cx, 0
 
+    totalPush:
+    div bx
+    push dx
+    mov dx, 0
+
+    inc cx
+    cmp ax, 0
+    jne totalPush
+
+    totalPrint:
+    pop dx
+    add dx, 48
+    mov ah, 2
+    int 21h
+    loop totalPrint
+
+    printMsg confirm6
+    printMsg confirm7
+    Input
+    cmp al, 'y'
+    je supporting
+
+    cmp al, 'n'
+    printMsg Thanks_msg
+    mov ah, 4ch
+    int 21h
 bill ENDP
+
+;description
+supporting PROC
+    printMsg emptyLine
+    jmp mainLoop
+supporting ENDP
+
 end main
