@@ -160,7 +160,7 @@ main PROC
     exit:
     mov ah, 6
 ; Black Background with text
-    mov al, 100
+    mov al, 00h         ; Full screen mode
     mov bh, 00001110b
     mov ch, 0
     mov cl, 0
