@@ -246,7 +246,7 @@ Addition PROC
 
     printString breaker
 
-    jmp main
+    jmp jumper
     ret
 Addition ENDP
 
@@ -290,7 +290,7 @@ Subtraction PROC
     printResult
     printString breaker
 
-    jmp main
+    jmp jumper
     ret
 Subtraction ENDP
 
@@ -331,7 +331,7 @@ Multiplication PROC
     printResult
 
     printString breaker
-    jmp main
+    jmp jumper
     ret
 Multiplication ENDP
 
@@ -399,7 +399,7 @@ Division PROC
     loop floatNo
 
     printString breaker
-    jmp main
+    jmp jumper
     ret
 Division ENDP
 
@@ -429,7 +429,7 @@ Square PROC
     printResult
 
     printString breaker
-    jmp main
+    jmp jumper
     ret
 Square ENDP
 
@@ -515,7 +515,7 @@ Table11 PROC
     int 21h
 
     printString breaker
-    jmp main
+    jmp jumper
     ret
 Table11 ENDP
 end main
