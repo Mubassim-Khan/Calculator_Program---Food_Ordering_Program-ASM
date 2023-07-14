@@ -1,4 +1,4 @@
-##This Repository contains 2 Assembly Language Project codes, some main points to be noted about the programs are:
+## This Repository contains 2 Assembly Language Project codes, some main points to be noted about the programs are:
 
 - MASM/TASM Assembler & 8086 Architecture is used in these programs.
 - Handled Error of relative jump in many possiblities.
